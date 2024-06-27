@@ -12,15 +12,14 @@ import userRoutes from "./routes/UserRoutes.js";
 // Server
 const server = express();
 
-server.use(cors({
-  origin: "http://localhost:5173",
-  methods: ['GET', 'POST'],
-  credentials: true
-}));
+server.use(cors());
 
 // PDBC
 MDBC();
-
+server.use((req, res, next) => {
+  console.log(`Request received: ${req.method} ${req.url}`);
+  next();
+});
 // Middlewares
 server.use(parser.json());
 server.use(parser.urlencoded({ extended: true }));

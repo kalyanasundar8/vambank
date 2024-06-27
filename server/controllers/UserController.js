@@ -2,7 +2,8 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import User from "../models/UserModel.js";
 import { sendSMS } from "../services/Notification.js";
-// import User from "../models/UserModel.js";
+import generateToken from "../services/GenerateToken.js";
+import jwt from "jsonwebtoken";
 
 // Method:  POST
 // Route:   /api/users/createuser
@@ -45,9 +46,37 @@ const createUser = asyncHandler(async (req, res) => {
         id: user._id,
         username: user.userName,
         mobilenumber: user.mobileNumber,
+        token: generateToken(user._id),
       });
     }
   }
 });
 
-export { createUser };
+// Method:  POST
+// Route:   /api/users/verifyUser
+const verifyUser = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    res.status(400).json({ mssg: "There is no token" });
+  }
+
+  const decodedToken = jwt.decode(token, process.env.SECRET_KEY);
+
+  const userExists = await User.findOne({ _id: decodedToken.id });
+
+  if (userExists) {
+    res.status(200).json({
+      Id: userExists._id,
+      Username: userExists.userName,
+      Mobilenumber: userExists.mobileNumber,
+      verificationStatus: true,
+    });
+  } else {
+    res.status(400).json({
+      verificationStatus: false,
+    });
+  }
+});
+
+export { createUser, verifyUser };
