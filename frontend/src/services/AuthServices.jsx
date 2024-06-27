@@ -9,12 +9,9 @@ export const userSignUp = (data) => {
     const response = api.post("/users/createUser", data);
     return response;
   } catch (error) {
-    if (error.response) {
+    if (error) {
       // The request was made and the server responded with a status code outside the range of 2xx
-      throw error.response.data;
-    } else if (error.request) {
-      // The request was made but no response was received
-      throw new Error("Network error: No response received");
+      throw error.response;
     } else {
       // Something happened in setting up the request that triggered an Error
       throw new Error(error.message);

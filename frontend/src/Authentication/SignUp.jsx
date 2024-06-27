@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // Form validation
 import { useForm } from "react-hook-form";
@@ -27,13 +27,20 @@ const SignUp = () => {
     resolver: yupResolver(validationSchema),
   });
 
+  const [errorMessage, setErrorMessage] = useState();
+
   const signup = async (data) => {
     console.log(data);
     try {
       const response = await userSignUp(data);
-      console.log("Success:", response.data);
+      if (response.status === 201) {
+        console.log(response);
+      } else {
+        console.log(response);
+      }
     } catch (error) {
-      console.error("Error:", error.message || error);
+      console.log(error?.response?.data?.mssg);
+      setErrorMessage(error?.response?.data?.mssg);
     }
   };
 
@@ -45,8 +52,15 @@ const SignUp = () => {
         <h1 className="text-3xl font-bold mb-5">Sign Up</h1>
         <form
           onSubmit={handleSubmit(signup)}
-          className="bg-white shadow-md px-[40px] py-12"
+          className="bg-white shadow-md px-[40px] pt-5 pb-12"
         >
+          {errorMessage ? (
+            <div className="border-2 border-red-500 px-2 py-2 bg-red-300">
+              <p className="text-red-500">{errorMessage}</p>
+            </div>
+          ) : (
+            ""
+          )}
           <div className="mb-4">
             <input
               type="text"
