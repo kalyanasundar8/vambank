@@ -6,12 +6,13 @@
   "type": "module",
   "scripts": {
     "server": "nodemon ./server/server.js",
-    "client": "npm run dev --prefix frontend",
+    "client": "npm run start --prefix frontend",
     "app": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "sundar",
   "license": "ISC",
   "dependencies": {
+    "@hookform/resolvers": "^3.6.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "colors": "^1.4.0",
@@ -24,10 +25,12 @@
     "mongoose": "^8.4.3",
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
+    "react-hook-form": "^7.52.0",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
     "twilio": "^5.2.0",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
