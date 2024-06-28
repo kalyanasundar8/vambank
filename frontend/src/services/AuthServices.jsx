@@ -18,3 +18,33 @@ export const userSignUp = (data) => {
     }
   }
 };
+
+export const verifyUserToken = (token) => {
+  try {
+    const response = api.post("/users/verifyUser", token);
+    return response;
+  } catch (error) {
+    if (error) {
+      // The request was made and the server responded with a status code outside the range of 2xx
+      throw error.response;
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw new Error(error.message);
+    }
+  }
+}
+
+export const userSignIn = (data) => {
+  try {
+    const response = api.post("/users/signinUser", data);
+    return response;
+  } catch (error) {
+    if (error) {
+      // The request was made and the server responded with a status code outside the range of 2xx
+      throw error.response;
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw new Error(error.message);
+    }
+  }
+};

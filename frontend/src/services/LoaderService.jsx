@@ -1,12 +1,12 @@
 import React from 'react'
 import { SyncLoader } from "react-spinners"
 
-const LoaderService = () => {
+const LoaderService = ({ size }) => {
   return (
     <SyncLoader
     color="#ffff"
     loading={true}
-    size={5}
+    size={size}
     aria-label="Loading Spinner"
     data-testid="loader"
   />

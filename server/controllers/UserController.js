@@ -79,4 +79,36 @@ const verifyUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { createUser, verifyUser };
+// Method:  POST
+// Route:   /api/users/signinUser
+const signinUser = asyncHandler (async (req, res) => {
+  const { mobileNumber, userPassword } = req.body;
+
+  if(!mobileNumber || !userPassword)  {
+    res.status(400).json({ mssg: "Please fill all the fields" });
+  }
+
+  // Check mobile number format
+  const mobFormat = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+  const validMobNumber = mobFormat.test(mobileNumber);
+
+  if (!validMobNumber) {
+    res.status(400).json({ mssg: "Not a valid mobile number" });
+  }
+
+  if(validMobNumber) {
+    const numberExists = await User.findOne({ mobileNumber });
+
+    if(numberExists && await (bcrypt.compare(userPassword, numberExists.password))) {
+      res.status(200).json({
+        token: generateToken(numberExists._id),
+      })
+    } else {
+      console.log("Number not exists")
+    }
+  } else {
+    console.log("Please a enter a valid mobilenumber")
+  }
+})
+
+export { createUser, verifyUser, signinUser };

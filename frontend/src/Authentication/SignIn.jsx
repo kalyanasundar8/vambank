@@ -7,29 +7,25 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
-import { userSignUp } from "../services/AuthServices";
+import { userSignIn } from "../services/AuthServices";
 import LoaderService from "../services/LoaderService";
 
-const SignUp = () => {
+const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // Form validation
   const validationSchema = Yup.object().shape({
-    userName: Yup.string().required("Username is required"),
     mobileNumber: Yup.string()
       .matches(/^[6-9]\d{9}$/, "Mobile number is not valid")
       .required("Mobilenumber is required"),
-    password: Yup.string()
+    userPassword: Yup.string()
       .matches(
         /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{6,}$/,
         "Password must be at least 6 characters, contain one uppercase letter, one number, and one special character"
       )
       .required("Password is required")
-      .min("6"),
-    confirmPassword: Yup.string()
-      .required("Confirm password is required")
-      .oneOf([Yup.ref("password")], "Password must match"),
+      .min("6")
   });
   const {
     register,
@@ -44,18 +40,18 @@ const SignUp = () => {
   const [errorMessage, setErrorMessage] = useState();
 
   // API request
-  const signup = async (data) => {
+  const signin = async (data) => {
+    console.log(data)
     try {
-      setLoading(true); // Setloading true while trying to fetch response
-      const response = await userSignUp(data);
-      // Check the response
-      if (response.status === 201) {
-        localStorage.setItem("token", JSON.stringify(response?.data?.token)); // Set the token from the response
+      setLoading(true);
+      const response = await userSignIn(data);
+      if (response.status === 200) {
+        localStorage.setItem("token", JSON.stringify(response?.data?.token));
         navigate("/");
         window.location.reload(); //  If response 201 navigate to the home page
         setLoading(false); // Set loading false when page navigate to the home page
       } else {
-        setLoading(false); // Set loading false if response not 201
+        setLoading(false);
       }
     } catch (error) {
       setLoading(false); // Set loading false while response will be error
@@ -71,7 +67,7 @@ const SignUp = () => {
       <div>
         <h1 className="text-3xl font-bold mb-5">Sign Up</h1>
         <form
-          onSubmit={handleSubmit(signup)}
+          onSubmit={handleSubmit(signin)}
           className="bg-white shadow-md px-[40px] pt-7 pb-12"
         >
           {errorMessage ? (
@@ -81,22 +77,6 @@ const SignUp = () => {
           ) : (
             ""
           )}
-          <div className="mb-4">
-            <input
-              type="text"
-              name="userName"
-              placeholder="Username"
-              className={`${
-                errors.userName
-                  ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
-                  : "border-2 border-gray-400 w-[300px] p-2 rounded"
-              }`}
-              {...register("userName")}
-            />
-            {errors.userName && (
-              <p className="text-red-500">{errors.userName.message}</p>
-            )}
-          </div>
           <div className="mb-4">
             <input
               type="tel"
@@ -116,48 +96,34 @@ const SignUp = () => {
           <div className="mb-4">
             <input
               type="password"
-              name="password"
+              name="userPassword"
               placeholder="Password"
               className={`${
-                errors.password
+                errors.userPassword
                   ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
                   : "border-2 border-gray-400 w-[300px] p-2 rounded"
               }`}
-              {...register("password")}
+              {...register("userPassword")}
             />
-            {errors.password && (
+            {errors.userPassword && (
               <p className="text-red-500 w-[300px]">
-                {errors.password.message}
+                {errors.userPassword.message}
               </p>
             )}
           </div>
-          <div className="mb-4">
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              className={`${
-                errors.confirmPassword
-                  ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
-                  : "border-2 border-gray-400 w-[300px] p-2 rounded"
-              }`}
-              {...register("confirmPassword")}
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-500">{errors.confirmPassword.message}</p>
-            )}
-          </div>
+
           <div>
             <button
               type="submit"
               className="bg-[#0E46A3] text-white font-bold w-[300px] py-2 px-4 rounded"
               disabled={loading}
             >
-              {loading ? <LoaderService size={5}/> : "Sign Up"}
+              {loading ? <LoaderService size={5} /> : "Sign In"}
             </button>
           </div>
           <div className="flex items-center justify-between mt-4">
-            <p>Already I have an account?</p>
-            <Link className="text-[#0E46A3] font-bold">Sign In</Link>
+            <p>Dont't have an account?</p>
+            <Link className="text-[#0E46A3] font-bold">Sign Up</Link>
           </div>
         </form>
       </div>
@@ -165,4 +131,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;
