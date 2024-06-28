@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/actions/Auth.action";
 
 // Form validation
 import { useForm } from "react-hook-form";
@@ -9,8 +11,8 @@ import { userSignUp } from "../services/AuthServices";
 import LoaderService from "../services/LoaderService";
 
 const SignUp = () => {
-
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Form validation
   const validationSchema = Yup.object().shape({
@@ -18,7 +20,13 @@ const SignUp = () => {
     mobileNumber: Yup.string()
       .matches(/^[6-9]\d{9}$/, "Mobile number is not valid")
       .required("Mobilenumber is required"),
-    password: Yup.string().matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{6,}$/, "Password must be at least 6 characters, contain one uppercase letter, one number, and one special character").required("Password is required").min("6"),
+    password: Yup.string()
+      .matches(
+        /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{6,}$/,
+        "Password must be at least 6 characters, contain one uppercase letter, one number, and one special character"
+      )
+      .required("Password is required")
+      .min("6"),
     confirmPassword: Yup.string()
       .required("Confirm password is required")
       .oneOf([Yup.ref("password")], "Password must match"),
@@ -43,8 +51,9 @@ const SignUp = () => {
 
       // Check the response
       if (response.status === 201) {
-        localStorage.setItem('token', JSON.stringify(response?.data?.token)); // Set the token from the response
-        navigate("/") //  If response 201 navigate to the home page
+        dispatch(setUser(response?.data));
+        localStorage.setItem("token", JSON.stringify(response?.data?.token)); // Set the token from the response
+        navigate("/"); //  If response 201 navigate to the home page
         setLoading(false); // Set loading false when page navigate to the home page
       } else {
         setLoading(false); // Set loading false if response not 201
@@ -118,7 +127,9 @@ const SignUp = () => {
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-red-500 w-[300px]">{errors.password.message}</p>
+              <p className="text-red-500 w-[300px]">
+                {errors.password.message}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -142,7 +153,7 @@ const SignUp = () => {
               className="bg-[#0E46A3] text-white font-bold w-[300px] py-2 px-4 rounded"
               disabled={loading}
             >
-              { loading ? <LoaderService /> : "Sign Up" }
+              {loading ? <LoaderService /> : "Sign Up"}
             </button>
           </div>
           <div className="flex items-center justify-between mt-4">
