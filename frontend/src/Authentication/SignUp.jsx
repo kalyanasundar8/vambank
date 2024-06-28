@@ -4,17 +4,21 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { userSignUp } from "../services/AuthServices";
+import LoaderService from "../services/LoaderService";
 
 const SignUp = () => {
+
+  const navigate = useNavigate();
+
   // Form validation
   const validationSchema = Yup.object().shape({
     userName: Yup.string().required("Username is required"),
     mobileNumber: Yup.string()
       .matches(/^[6-9]\d{9}$/, "Mobile number is not valid")
       .required("Mobilenumber is required"),
-    password: Yup.string().required("Password is required").min("6"),
+    password: Yup.string().matches(/^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{6,}$/, "Password must be at least 6 characters, contain one uppercase letter, one number, and one special character").required("Password is required").min("6"),
     confirmPassword: Yup.string()
       .required("Confirm password is required")
       .oneOf([Yup.ref("password")], "Password must match"),
@@ -27,36 +31,44 @@ const SignUp = () => {
     resolver: yupResolver(validationSchema),
   });
 
+  // Signup state handling
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
 
+  // API request
   const signup = async (data) => {
-    console.log(data);
     try {
+      setLoading(true); // Setloading true while trying to fetch response
       const response = await userSignUp(data);
+
+      // Check the response
       if (response.status === 201) {
-        console.log(response);
+        localStorage.setItem('token', JSON.stringify(response?.data?.token)); // Set the token from the response
+        navigate("/") //  If response 201 navigate to the home page
+        setLoading(false); // Set loading false when page navigate to the home page
       } else {
-        console.log(response);
+        setLoading(false); // Set loading false if response not 201
       }
     } catch (error) {
-      console.log(error?.response?.data?.mssg);
-      setErrorMessage(error?.response?.data?.mssg);
+      setLoading(false); // Set loading false while response will be error
+      setErrorMessage(error?.response?.data?.mssg); // Set the error message to the errorMessage state
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000); // Set the timeout for the error message
     }
   };
 
   return (
     <section className="flex items-center justify-center m-[50px]">
-      {/* <div className="flex items-center space-x-[90px]"> */}
-      {/* <img src={SignupIllustration} alt="Signup illustration" width={500} /> */}
       <div>
         <h1 className="text-3xl font-bold mb-5">Sign Up</h1>
         <form
           onSubmit={handleSubmit(signup)}
-          className="bg-white shadow-md px-[40px] pt-5 pb-12"
+          className="bg-white shadow-md px-[40px] pt-7 pb-12"
         >
           {errorMessage ? (
-            <div className="border-2 border-red-500 px-2 py-2 bg-red-300">
-              <p className="text-red-500">{errorMessage}</p>
+            <div className="border-2 border-red-500 px-2 py-2 bg-red-300 mb-5 rounded-md">
+              <p className="text-red-500 font-bold">{errorMessage}</p>
             </div>
           ) : (
             ""
@@ -106,7 +118,7 @@ const SignUp = () => {
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-red-500">{errors.password.message}</p>
+              <p className="text-red-500 w-[300px]">{errors.password.message}</p>
             )}
           </div>
           <div className="mb-4">
@@ -128,8 +140,9 @@ const SignUp = () => {
             <button
               type="submit"
               className="bg-[#0E46A3] text-white font-bold w-[300px] py-2 px-4 rounded"
+              disabled={loading}
             >
-              Sign Up
+              { loading ? <LoaderService /> : "Sign Up" }
             </button>
           </div>
           <div className="flex items-center justify-between mt-4">
@@ -138,7 +151,6 @@ const SignUp = () => {
           </div>
         </form>
       </div>
-      {/* </div> */}
     </section>
   );
 };
