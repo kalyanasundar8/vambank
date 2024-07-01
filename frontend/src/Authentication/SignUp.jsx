@@ -50,7 +50,7 @@ const SignUp = () => {
       const response = await userSignUp(data);
       // Check the response
       if (response.status === 201) {
-        localStorage.setItem("token", JSON.stringify(response?.data?.token)); // Set the token from the response
+        sessionStorage.setItem("token", JSON.stringify(response?.data?.token)); // Set the token from the response
         navigate("/");
         window.location.reload(); //  If response 201 navigate to the home page
         setLoading(false); // Set loading false when page navigate to the home page
@@ -68,8 +68,8 @@ const SignUp = () => {
 
   return (
     <section className="flex items-center justify-center m-[50px]">
-      <div>
-        <h1 className="text-3xl font-bold mb-5">Sign Up</h1>
+      <div className="my-10">
+        <h1 className="text-4xl font-bold mb-5">Sign Up</h1>
         <form
           onSubmit={handleSubmit(signup)}
           className="bg-white shadow-md px-[40px] pt-7 pb-12"
@@ -88,8 +88,8 @@ const SignUp = () => {
               placeholder="Username"
               className={`${
                 errors.userName
-                  ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
-                  : "border-2 border-gray-400 w-[300px] p-2 rounded"
+                  ? "border-2 border-red-500 w-[400px] px-2 py-3 rounded outline-none"
+                  : "border-2 border-gray-400 w-[400px] px-2 py-3 rounded"
               }`}
               {...register("userName")}
             />
@@ -104,8 +104,8 @@ const SignUp = () => {
               placeholder="Phone Number"
               className={`${
                 errors.mobileNumber
-                  ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
-                  : "border-2 border-gray-400 w-[300px] p-2 rounded"
+                  ? "border-2 border-red-500 w-[400px] px-2 py-3 rounded outline-none"
+                  : "border-2 border-gray-400 w-[400px] px-2 py-3 rounded"
               }`}
               {...register("mobileNumber")}
             />
@@ -120,13 +120,13 @@ const SignUp = () => {
               placeholder="Password"
               className={`${
                 errors.password
-                  ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
-                  : "border-2 border-gray-400 w-[300px] p-2 rounded"
+                  ? "border-2 border-red-500 w-[400px] px-2 py-3 rounded outline-none"
+                  : "border-2 border-gray-400 w-[400px] px-2 py-3 rounded"
               }`}
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-red-500 w-[300px]">
+              <p className="text-red-500 w-[400px]">
                 {errors.password.message}
               </p>
             )}
@@ -137,8 +137,8 @@ const SignUp = () => {
               placeholder="Confirm Password"
               className={`${
                 errors.confirmPassword
-                  ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
-                  : "border-2 border-gray-400 w-[300px] p-2 rounded"
+                  ? "border-2 border-red-500 w-[400px] px-2 py-3 rounded outline-none"
+                  : "border-2 border-gray-400 w-[400px] px-2 py-3 rounded"
               }`}
               {...register("confirmPassword")}
             />
@@ -149,7 +149,7 @@ const SignUp = () => {
           <div>
             <button
               type="submit"
-              className="bg-[#0E46A3] text-white font-bold w-[300px] py-2 px-4 rounded"
+              className="bg-[#0E46A3] text-white font-bold w-[400px] px-2 py-4 rounded"
               disabled={loading}
             >
               {loading ? <LoaderService size={5}/> : "Sign Up"}
@@ -157,7 +157,7 @@ const SignUp = () => {
           </div>
           <div className="flex items-center justify-between mt-4">
             <p>Already I have an account?</p>
-            <Link className="text-[#0E46A3] font-bold">Sign In</Link>
+            <Link to="/signin" className="text-[#0E46A3] font-bold">Sign In</Link>
           </div>
         </form>
       </div>

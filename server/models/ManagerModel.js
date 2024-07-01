@@ -6,6 +6,10 @@ const managerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    position: {
+      tpye: String,
+      required: true,
+    },
     firstName: {
       type: String,
       required: true,
@@ -46,5 +50,5 @@ const managerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Manager = mongoose.model("Manager", managerSchema);
+const Manager = mongoose.model("manager", managerSchema);
 export default Manager;

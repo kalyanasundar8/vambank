@@ -104,10 +104,10 @@ const signinUser = asyncHandler (async (req, res) => {
         token: generateToken(numberExists._id),
       })
     } else {
-      console.log("Number not exists")
+      res.status(400).json({ mssg: "Number not exists" })
     }
   } else {
-    console.log("Please a enter a valid mobilenumber")
+    res.status(400).json({ mssg: "Please a enter a valid mobilenumber" })
   }
 })
 

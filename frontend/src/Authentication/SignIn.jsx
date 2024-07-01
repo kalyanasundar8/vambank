@@ -46,7 +46,7 @@ const SignIn = () => {
       setLoading(true);
       const response = await userSignIn(data);
       if (response.status === 200) {
-        localStorage.setItem("token", JSON.stringify(response?.data?.token));
+        sessionStorage.setItem('token', JSON.stringify(response?.data?.token));
         navigate("/");
         window.location.reload(); //  If response 201 navigate to the home page
         setLoading(false); // Set loading false when page navigate to the home page
@@ -64,14 +64,14 @@ const SignIn = () => {
 
   return (
     <section className="flex items-center justify-center m-[50px]">
-      <div>
-        <h1 className="text-3xl font-bold mb-5">Sign Up</h1>
+      <div className="my-[130px]">
+        <h1 className="text-4xl font-bold mb-5">Sign In</h1>
         <form
           onSubmit={handleSubmit(signin)}
           className="bg-white shadow-md px-[40px] pt-7 pb-12"
         >
           {errorMessage ? (
-            <div className="border-2 border-red-500 px-2 py-2 bg-red-300 mb-5 rounded-md">
+            <div className="border-2 border-red-500 px-2 py-3 bg-red-300 mb-5 rounded-md">
               <p className="text-red-500 font-bold">{errorMessage}</p>
             </div>
           ) : (
@@ -84,8 +84,8 @@ const SignIn = () => {
               placeholder="Phone Number"
               className={`${
                 errors.mobileNumber
-                  ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
-                  : "border-2 border-gray-400 w-[300px] p-2 rounded"
+                  ? "border-2 border-red-500 w-[400px] px-2 py-3 rounded outline-none"
+                  : "border-2 border-gray-400 w-[400px] px-2 py-3 rounded"
               }`}
               {...register("mobileNumber")}
             />
@@ -100,13 +100,13 @@ const SignIn = () => {
               placeholder="Password"
               className={`${
                 errors.userPassword
-                  ? "border-2 border-red-500 w-[300px] p-2 rounded outline-none"
-                  : "border-2 border-gray-400 w-[300px] p-2 rounded"
+                  ? "border-2 border-red-500 w-[400px] px-2 py-3 rounded outline-none"
+                  : "border-2 border-gray-400 w-[400px] px-2 py-3 rounded"
               }`}
               {...register("userPassword")}
             />
             {errors.userPassword && (
-              <p className="text-red-500 w-[300px]">
+              <p className="text-red-500 w-[400px]">
                 {errors.userPassword.message}
               </p>
             )}
@@ -115,7 +115,7 @@ const SignIn = () => {
           <div>
             <button
               type="submit"
-              className="bg-[#0E46A3] text-white font-bold w-[300px] py-2 px-4 rounded"
+              className="bg-[#0E46A3] text-white font-bold w-[400px] px-2 py-4 rounded"
               disabled={loading}
             >
               {loading ? <LoaderService size={5} /> : "Sign In"}
@@ -123,7 +123,7 @@ const SignIn = () => {
           </div>
           <div className="flex items-center justify-between mt-4">
             <p>Dont't have an account?</p>
-            <Link className="text-[#0E46A3] font-bold">Sign Up</Link>
+            <Link to="/signup" className="text-[#0E46A3] font-bold">Sign Up</Link>
           </div>
         </form>
       </div>

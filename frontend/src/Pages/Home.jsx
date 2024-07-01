@@ -1,33 +1,53 @@
 import React from "react";
-import Vault from "../assets/vault.png";
-import { Link } from "react-router-dom";
-import UserReviews from "../components/UserReviews";
+import OB from "../assets/online_banking.jpg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBanSmoking,
+  faBank,
+  faExchange,
+  faHandHoldingUsd,
+  faMoneyBillTransfer,
+  faPiggyBank,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Home = () => {
   return (
-    <div>
-      <section className="flex items-center justify-center space-x-3 mt-[80px]">
-        <div>
-          <h1 className="font-primary font-bold text-start w-[900px] leading-[100px] text-[80px]">
-            Saving your money is easy and secure with vambank
-          </h1>
-          <p className="font-secondary w-[700px] tracking-tight">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt ipsum,
-            accusantium ullam distinctio nemo, in accusamus tempore dolorem, eos
-            quisquam nam quas molestias soluta a repellat? Eaque nobis vitae
-            soluta?
+    <div className="mx-[200px]">
+      <section className="flex items-center justify-center space-x-5">
+        <div className="">
+          <h1 className="text-5xl font-bold">Navigate to Online Bank.</h1>
+          <h1 className="text-5xl font-bold">Save your money.</h1>
+          <p className="text-xl text-justify mt-5 mb-8">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae magni
+            sunt repellendus eveniet consequuntur in culpa explicabo debitis
+            nesciunt delectus! Autem dolore
           </p>
-          <div className="flex items-center space-x-5 mt-5">
-            <button className="bg-secondaryBlue px-5 py-3 rounded-md text-white font-bold">
-              CREATE ACCOUNT
-            </button>
-            <Link>Learn more</Link>
-          </div>
+          <button className="text-xl bg-secondaryBlue px-5 py-3 rounded-md text-white font-bold">
+            Create account
+          </button>
         </div>
-        <img src={Vault} width={700} alt="Savings-pig" />
+        <img src={OB} alt="Online banking" width={550} />
       </section>
-      <h1 className="text-2xl font-primary font-bold mt-[70px]">Reviews from the users</h1>
-      <UserReviews />
+      {/* Services */}
+      <section className="flex items-center justify-between m-[80px]">
+        <div className="flex flex-col items-center space-y-5">
+          <FontAwesomeIcon icon={faUserPlus} className="text-5xl text-secondaryBlue" />
+          <h1 className="text-2xl font-semiBold w-[150px] text-center">Easy Account Creation</h1>
+        </div>
+        <div className="flex flex-col items-center space-y-5">
+          <FontAwesomeIcon icon={faPiggyBank} className="text-5xl text-secondaryBlue" />
+          <h1 className="text-2xl font-semiBold w-[150px] text-center">Save your money</h1>
+        </div>
+        <div className="flex flex-col items-center space-y-5">
+          <FontAwesomeIcon icon={faExchange} className="text-5xl text-secondaryBlue" />
+          <h1 className="text-2xl font-semiBold w-[150px] text-center">Secure Transaction</h1>
+        </div>
+        <div className="flex flex-col items-center space-y-5">
+          <FontAwesomeIcon icon={faHandHoldingUsd} className="text-5xl text-secondaryBlue" />
+          <h1 className="text-2xl font-semiBold w-[150px] text-center">Geat loan easy</h1>
+        </div>
+      </section>
     </div>
   );
 };
