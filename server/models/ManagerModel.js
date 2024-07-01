@@ -7,7 +7,7 @@ const managerSchema = new mongoose.Schema(
       required: true,
     },
     position: {
-      tpye: String,
+      type: String,
       required: true,
     },
     firstName: {
@@ -42,9 +42,9 @@ const managerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    branchName: {
-      type: String,
-      required: true,
+    branchId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Branch",
     },
   },
   { timestamps: true }

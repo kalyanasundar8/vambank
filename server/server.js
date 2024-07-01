@@ -8,6 +8,7 @@ import colors from "colors";
 // Custom Modules
 import MDBC from "./config/config.js";
 import userRoutes from "./routes/UserRoutes.js";
+import founderRoutes from "./routes/FounderRoutes.js";
 
 // Server
 const server = express();
@@ -29,6 +30,7 @@ const port = process.env.PORT;
 
 // Routes
 server.use("/api/users", userRoutes);
+server.use("/api/founder", founderRoutes)
 
 // Server listening to the port
 server.listen(port, () => {
