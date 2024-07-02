@@ -4,6 +4,7 @@ import Branch from "../models/BranchModel.js";
 import Manager from "../models/ManagerModel.js";
 import { generateEmployeeId } from "../services/EmployeeIdService.js";
 import generateToken from "../services/GenerateToken.js";
+import { sendSMS } from "../services/Notification.js";
 
 // POST
 // /api/founder/createBranches
@@ -23,10 +24,28 @@ const createBranch = asyncHandler(async (req, res) => {
   if (!branchExists) {
     const branch = await Branch.create({
       branchName,
+      branchManagerId: branchManagerId ? branchManagerId : null,
       address,
       location,
       pincode,
     });
+
+    if (branch.branchManagerId) {
+      await Manager.findByIdAndUpdate(branch.branchManagerId, {
+        branchId: branch._id,
+      });
+    }
+
+    res.status(201).json({
+      branchName: branch.branchName,
+      branchManagerId: branch.branchManagerId,
+      address: branch.address,
+      location: branch.location,
+      pincode: branch.pincode,
+      token: generateToken(branch._id),
+    });
+  } else {
+    res.status(400).json({ mssg: "Something went wrong" });
   }
 });
 
@@ -98,7 +117,12 @@ const createManager = asyncHandler(async (req, res) => {
         dateOfJoining,
         branchId: null,
       });
-
+      const sms = await sendSMS(
+        mobileNumber,
+        "Manager",
+        manager.firstName,
+        manager.employeeId
+      );
       res.status(201).json({
         id: manager._id,
         employeeId: manager.employeeId,
@@ -110,8 +134,8 @@ const createManager = asyncHandler(async (req, res) => {
         address: manager.address,
         dateOfJoining: manager.dateOfJoining,
         branchId: manager.branchId,
-        token: generateToken(manager._id)
-      })
+        token: generateToken(manager._id),
+      });
     }
   }
 });

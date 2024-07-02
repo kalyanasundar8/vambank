@@ -1,32 +1,20 @@
 import mongoose from "mongoose";
 
-const managerSchema = new mongoose.Schema(
+const requestSchema = new mongoose.Schema(
   {
-    employeeId: {
-      type: String,
-      required: true,
-    },
-    branchId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "branche",
+      ref: "User",
     },
-    position: {
+    userName: {
       type: String,
       required: true,
     },
-    firstName: {
+    fatherName: {
       type: String,
       required: true,
     },
-    lastName: {
-      type: String,
-      required: false,
-    },
-    age: {
-      type: String,
-      required: true,
-    },
-    dob: {
+    motherName: {
       type: String,
       required: true,
     },
@@ -42,14 +30,21 @@ const managerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    dateOfJoining: {
+    aadharNumber: {
       type: String,
       required: true,
     },
-    accountRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "request" }],
+    branchId: {
+      type: String,
+      required: true,
+    },
+    accountType: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-const Manager = mongoose.model("manager", managerSchema);
-export default Manager;
+const Request = mongoose.model("request", requestSchema);
+export default Request;

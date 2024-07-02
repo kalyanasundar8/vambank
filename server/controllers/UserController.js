@@ -41,7 +41,7 @@ const createUser = asyncHandler(async (req, res) => {
         mobileNumber,
         password: hashedPassword,
       });
-      const sms = await sendSMS(mobileNumber);
+      const sms = await sendSMS(mobileNumber, "User", user.userName);
       res.status(201).json({
         id: user._id,
         username: user.userName,
@@ -109,6 +109,14 @@ const signinUser = asyncHandler (async (req, res) => {
   } else {
     res.status(400).json({ mssg: "Please a enter a valid mobilenumber" })
   }
+})
+
+// Method:  POST
+// Route:   /api/users/accountRequest
+const sendAccountRequest = asyncHandler (async (req, res) => {
+  const { userId, userName, fatherName, motherName, mobileNumber, email, address, branchId, accountType } = req.body;
+
+  
 })
 
 export { createUser, verifyUser, signinUser };

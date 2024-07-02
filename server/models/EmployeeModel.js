@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const managerSchema = new mongoose.Schema(
+const employeeSchema = new mongoose.Schema(
   {
     employeeId: {
       type: String,
@@ -10,17 +10,17 @@ const managerSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "branche",
     },
-    position: {
-      type: String,
-      required: true,
-    },
     firstName: {
       type: String,
       required: true,
     },
     lastName: {
       type: String,
-      required: false,
+      required: true,
+    },
+    position: {
+      type: String,
+      required: true,
     },
     age: {
       type: String,
@@ -42,14 +42,7 @@ const managerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    dateOfJoining: {
-      type: String,
-      required: true,
-    },
-    accountRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "request" }],
+    accountRequest: [{ type: mongoose.Schema.Types.ObjectId, ref: "request" }],
   },
   { timestamps: true }
 );
-
-const Manager = mongoose.model("manager", managerSchema);
-export default Manager;

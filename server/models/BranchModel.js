@@ -5,7 +5,7 @@ const branchSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    branchManager: {
+    branchManagerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Manager"
     },
