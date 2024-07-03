@@ -61,6 +61,7 @@ const createManager = asyncHandler(async (req, res) => {
     email,
     address,
     dateOfJoining,
+    branchId,
   } = req.body;
 
   if (
@@ -115,8 +116,15 @@ const createManager = asyncHandler(async (req, res) => {
         email,
         address,
         dateOfJoining,
-        branchId: null,
+        branchId: branchId ? branchId : null,
       });
+      const branch = await Branch.findOne({ _id:branchId });
+      console.log(branch)
+
+      if (branch._id === branchId) {
+        await Branch.findByIdAndUpdate({_id:branchId}, { branchManagerId: manager._id });
+      }
+
       const sms = await sendSMS(
         mobileNumber,
         "Manager",

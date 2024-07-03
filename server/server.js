@@ -9,6 +9,7 @@ import colors from "colors";
 import MDBC from "./config/config.js";
 import userRoutes from "./routes/UserRoutes.js";
 import founderRoutes from "./routes/FounderRoutes.js";
+import managerRoutes from "./routes/ManagerRoutes.js";
 
 // Server
 const server = express();
@@ -30,7 +31,8 @@ const port = process.env.PORT;
 
 // Routes
 server.use("/api/users", userRoutes);
-server.use("/api/founder", founderRoutes)
+server.use("/api/founder", founderRoutes);
+server.use("/api/manager", managerRoutes)
 
 // Server listening to the port
 server.listen(port, () => {

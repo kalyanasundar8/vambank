@@ -46,6 +46,7 @@ const managerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    employeeList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'employee' }],
     accountRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "request" }],
   },
   { timestamps: true }

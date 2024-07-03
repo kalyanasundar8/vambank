@@ -30,6 +30,10 @@ const employeeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    dateOfJoining: {
+      type: String,
+      required: true,
+    },
     mobileNumber: {
       type: String,
       required: true,
@@ -46,3 +50,6 @@ const employeeSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+const Employee = mongoose.model("employee", employeeSchema);
+export default Employee;
