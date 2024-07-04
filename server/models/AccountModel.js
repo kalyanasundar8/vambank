@@ -5,6 +5,30 @@ const accountsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    userName: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+    },
+    mobileNumber: {
+        type: String,
+        required: true,
+    },
+    branchId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Branch',
+    },
+    address: {
+        type: String,
+        required: true,
+    },
+    accountType: {
+        type: String,
+        required: true,
+    },
     accountHolder: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
