@@ -118,11 +118,11 @@ const createManager = asyncHandler(async (req, res) => {
         dateOfJoining,
         branchId: branchId ? branchId : null,
       });
-      const branch = await Branch.findOne({ _id:branchId });
-      console.log(branch)
 
-      if (branch._id === branchId) {
-        await Branch.findByIdAndUpdate({_id:branchId}, { branchManagerId: manager._id });
+      if (branchId) {
+        await Branch.findByIdAndUpdate(branchId, {
+          branchManagerId: manager._id,
+        });
       }
 
       const sms = await sendSMS(
@@ -148,4 +148,19 @@ const createManager = asyncHandler(async (req, res) => {
   }
 });
 
-export { createBranch, createManager };
+const removeManager = asyncHandler(async (req, res) => {
+  const { id } = req.body;
+
+  const managerExists = await Manager.findOne({ _id: id });
+
+  if (managerExists) {
+    await Manager.findByIdAndDelete({ _id: id });
+    await Branch.updateOne(
+      { _id: managerExists.branchId },
+      { $unset: { branchManagerId: "" } }
+    );
+    res.status(200).json({ mssg: `Manager (${id}) deleted` });
+  }
+});
+
+export { createBranch, createManager, removeManager };
