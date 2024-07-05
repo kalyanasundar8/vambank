@@ -137,6 +137,7 @@ const sendAccountRequest = asyncHandler(async (req, res) => {
     accountType,
   } = req.body;
 
+  // Check all required fields are entered
   if (
     !userId ||
     !userName ||
@@ -149,7 +150,7 @@ const sendAccountRequest = asyncHandler(async (req, res) => {
     !branchId ||
     !accountType
   ) {
-    res.status(400).json({ mssg: "Please fill all the fields" });
+    return res.status(400).json({ mssg: "Please fill all the fields" });
   }
 
   // Check mobile number format
@@ -157,23 +158,26 @@ const sendAccountRequest = asyncHandler(async (req, res) => {
   const validMobNumber = mobFormat.test(mobileNumber);
 
   if (!validMobNumber) {
-    res.status(400).json({ mssg: "Enter a valid mobile number" });
+    return res.status(400).json({ mssg: "Enter a valid mobile number" });
   }
 
+  // Check email format
   const emailFormat = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const validEmail = emailFormat.test(email);
 
   if (!validEmail) {
-    res.status(400).json({ mssg: "Enter a valid email" });
+    return res.status(400).json({ mssg: "Enter a valid email" });
   }
 
+  // Check Aadhaar number format
   const aadharFormat = /^\d{12}$/;
   const validAadhar = aadharFormat.test(aadharNumber);
 
   if (!validAadhar) {
-    res.status(400).json({ mssg: "Enter a valid aadharnumber" });
+    return res.status(400).json({ mssg: "Enter a valid Aadhaar number" });
   }
 
+  // Check if mobile number, email, or Aadhaar number already exists in the Account model
   const [mobileNumberExists, emailExists, aadharExists] = await Promise.all([
     Request.findOne({ mobileNumber }),
     Request.findOne({ email }),
@@ -182,14 +186,33 @@ const sendAccountRequest = asyncHandler(async (req, res) => {
 
   if (mobileNumberExists || emailExists || aadharExists) {
     const existingFields = [];
-    if (mobileNumberExists) existingFields.push("Mobilenumber");
+    if (mobileNumberExists) existingFields.push("Mobile number");
     if (emailExists) existingFields.push("Email");
-    if (aadharExists) existingFields.push("Aadharnumber");
+    if (aadharExists) existingFields.push("Aadhaar number");
 
-    res
+    return res
       .status(400)
       .json({ mssg: `${existingFields.join(", ")} already exists` });
-  } else {
+  }
+
+  if (!mobileNumberExists && !emailExists && !aadharExists) {
+    // Check if user already has a pending request
+    const userRequestExists = await Request.findOne({ userId });
+
+    if (userRequestExists) {
+      return res.status(400).json({
+        mssg: "You already requested for account creation, please wait for our response",
+      });
+    }
+
+    // Find an employee with the position "Clerk" in the specified branch
+    const employee = await Employee.findOne({ branchId, position: "Clerk" });
+
+    if (!employee) {
+      return res.status(400).json({ mssg: "There is no clerk in this branch" });
+    }
+
+    // Create the account request
     const request = await Request.create({
       userId,
       userName,
@@ -203,28 +226,14 @@ const sendAccountRequest = asyncHandler(async (req, res) => {
       accountType,
     });
 
-    // const user = await Request.findOne({ _id: request.userId });
-
-    // if (user) {
-    //   res
-    //     .status(400)
-    //     .json({
-    //       mssg: "You already requested for account creation, please wait for our response",
-    //     });
-    // }
-
-    // const employee = await Employee.findOne({ branchId });
-
-    // if (employee.branchId == branchId && employee.position === "Clerk") {
-    //   employee.accountRequest.push(request._id);
-    //   await employee.save();
-    // } else {
-    //   res.status(400).json({ mssg: "There is no employee in this branch" });
-    // }
+    // Add the request to the clerk's account requests
+    employee.accountRequest.push(request._id);
+    await employee.save();
 
     res.status(201).json({
       id: request._id,
       userId: request.userId,
+      userName: request.userName,
       fatherName: request.fatherName,
       motherName: request.motherName,
       mobileNumber: request.mobileNumber,
