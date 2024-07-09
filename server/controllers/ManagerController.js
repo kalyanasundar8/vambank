@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import Employee from "../models/EmployeeModel.js";
 import Manager from "../models/ManagerModel.js";
 import { generateEmployeeId } from "../services/EmployeeIdService.js";
+import Branch from "../models/BranchModel.js";
 
 // POST
 // /api/manager/employee
@@ -30,7 +31,7 @@ const createEmployee = asyncHandler(async (req, res) => {
     !email ||
     !address
   ) {
-    res.status(400).json({ mssg: "Please fill all the fields" });
+    return res.status(400).json({ mssg: "Please fill all the fields" });
   }
 
   // Check mobile number format
@@ -38,14 +39,20 @@ const createEmployee = asyncHandler(async (req, res) => {
   const validMobNumber = mobFormat.test(mobileNumber);
 
   if (!validMobNumber) {
-    res.status(400).json({ mssg: "Enter a valid mobile number" });
+    return res.status(400).json({ mssg: "Enter a valid mobile number" });
   }
 
   const emailFormat = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const validEmail = emailFormat.test(email);
 
   if (!validEmail) {
-    res.status(400).json({ mssg: "Enter a valid email" });
+    return res.status(400).json({ mssg: "Enter a valid email" });
+  }
+
+  const branchExists = await Branch.findOne({ _id: branchId });
+
+  if (!branchExists) {
+    return res.status(400).json({ mssg: "Branch not exists" });
   }
 
   if (validMobNumber && validEmail) {
@@ -53,11 +60,11 @@ const createEmployee = asyncHandler(async (req, res) => {
     const emailExists = await Employee.findOne({ email });
 
     if (numberExists) {
-      res.status(400).json({ mssg: "Mobilenumber already exists" });
+      return res.status(400).json({ mssg: "Mobilenumber already exists" });
     }
 
     if (emailExists) {
-      res.status(400).json({ mssg: "Email already exists" });
+      return res.status(400).json({ mssg: "Email already exists" });
     }
 
     if (!numberExists && !emailExists) {
@@ -82,7 +89,7 @@ const createEmployee = asyncHandler(async (req, res) => {
         await manager.save();
       }
 
-      res.status(201).json({
+      return res.status(201).json({
         employeeId: employee._id,
         branchId: employee.branchId,
         firstName: employee.firstName,
@@ -99,4 +106,22 @@ const createEmployee = asyncHandler(async (req, res) => {
   }
 });
 
-export { createEmployee };
+const removeEmployee = asyncHandler(async (req, res) => {
+  const { id } = req.body;
+
+  const employeeExists = await Employee.findOne({ _id: id });
+
+  if (employeeExists) {
+    await Employee.findByIdAndDelete({ _id: id });
+    const mana = await Manager.updateOne(
+      { branchId: employeeExists.branchId },
+      { $pull: { employeeList:id } }
+    );
+    console.log(mana);
+    res.status(200).json({ mssg: `Employee (${id}) deleted` });
+  } else {
+    res.status(400).json({ mssg: `There is no employee in this ID:${id}` });
+  }
+});
+
+export { createEmployee, removeEmployee };

@@ -74,7 +74,7 @@ const createManager = asyncHandler(async (req, res) => {
     !address ||
     !dateOfJoining
   ) {
-    res.status(400).json({ mssg: "Please fill all the fields" });
+    return res.status(400).json({ mssg: "Please fill all the fields" });
   }
 
   // Check mobile number format
@@ -82,14 +82,20 @@ const createManager = asyncHandler(async (req, res) => {
   const validMobNumber = mobFormat.test(mobileNumber);
 
   if (!validMobNumber) {
-    res.status(400).json({ mssg: "Enter a valid mobile number" });
+    return res.status(400).json({ mssg: "Enter a valid mobile number" });
   }
 
   const emailFormat = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const validEmail = emailFormat.test(email);
 
   if (!validEmail) {
-    res.status(400).json({ mssg: "Enter a valid email" });
+    return res.status(400).json({ mssg: "Enter a valid email" });
+  }
+
+  const branchExists = await Branch.findOne({ _id: branchId });
+
+  if (!branchExists) {
+    return res.status(400).json({ mssg: "Branch not exists" });
   }
 
   if (validMobNumber && validEmail) {
@@ -97,11 +103,11 @@ const createManager = asyncHandler(async (req, res) => {
     const emailExists = await Manager.findOne({ email });
 
     if (numberExists) {
-      res.status(400).json({ mssg: "Mobilenumber already exists" });
+      return res.status(400).json({ mssg: "Mobilenumber already exists" });
     }
 
     if (emailExists) {
-      res.status(400).json({ mssg: "Email already exists" });
+      return res.status(400).json({ mssg: "Email already exists" });
     }
 
     if (!numberExists && !emailExists) {
@@ -131,7 +137,7 @@ const createManager = asyncHandler(async (req, res) => {
         manager.firstName,
         manager.employeeId
       );
-      res.status(201).json({
+      return res.status(201).json({
         id: manager._id,
         employeeId: manager.employeeId,
         firstName: manager.firstName,
@@ -160,6 +166,8 @@ const removeManager = asyncHandler(async (req, res) => {
       { $unset: { branchManagerId: "" } }
     );
     res.status(200).json({ mssg: `Manager (${id}) deleted` });
+  } else {
+    res.status(400).json({ mssg: `There is no managers in this ID:${id}` });
   }
 });
 

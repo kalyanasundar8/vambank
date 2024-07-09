@@ -8,9 +8,9 @@ import { sendSMS } from "../services/Notification.js";
 import jwt from "jsonwebtoken";
 // Models
 import User from "../models/UserModel.js";
-import Account from "../models/AccountModel.js";
 import Request from "../models/RequestModel.js";
 import Employee from "../models/EmployeeModel.js";
+import Account from "../models/AccountModel.js";
 
 // Method:  POST
 // Route:   /api/users/createuser
@@ -245,5 +245,31 @@ const sendAccountRequest = asyncHandler(async (req, res) => {
     });
   }
 });
+
+// Method:  DELETE
+// Route:   /api/users/deleteProfile
+// const deleteProfile = asyncHandler(async (req, res) => {
+//   const { id } = req.body;
+
+//   const userExists = await User.findOne({ _id: id });
+
+//   const userHaveAccount = await Account.findOne({ _id:id });
+
+//   if(userHaveAccount) {
+
+//   }
+
+//   if (employeeExists) {
+//     await Employee.findByIdAndDelete({ _id: id });
+//     const mana = await Manager.updateOne(
+//       { branchId: employeeExists.branchId },
+//       { $pull: { employeeList:id } }
+//     );
+//     console.log(mana);
+//     res.status(200).json({ mssg: `Employee (${id}) deleted` });
+//   } else {
+//     res.status(400).json({ mssg: `There is no employee in this ID:${id}` });
+//   }
+// });
 
 export { createUser, verifyUser, signinUser, sendAccountRequest };
