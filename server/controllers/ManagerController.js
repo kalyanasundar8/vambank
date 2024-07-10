@@ -1,11 +1,14 @@
 import asyncHandler from "express-async-handler";
+// Services
+import { generateEmployeeId } from "../services/EmployeeIdService.js";
+// Models
 import Employee from "../models/EmployeeModel.js";
 import Manager from "../models/ManagerModel.js";
-import { generateEmployeeId } from "../services/EmployeeIdService.js";
 import Branch from "../models/BranchModel.js";
+import Account from "../models/AccountModel.js";
 
-// POST
-// /api/manager/employee
+//Method   POST
+//Route    /api/manager/employee
 const createEmployee = asyncHandler(async (req, res) => {
   const {
     branchId,
@@ -106,6 +109,8 @@ const createEmployee = asyncHandler(async (req, res) => {
   }
 });
 
+//Method   DELETE
+//Route    /api/manager/removeEmployee
 const removeEmployee = asyncHandler(async (req, res) => {
   const { id } = req.body;
 
@@ -115,13 +120,43 @@ const removeEmployee = asyncHandler(async (req, res) => {
     await Employee.findByIdAndDelete({ _id: id });
     const mana = await Manager.updateOne(
       { branchId: employeeExists.branchId },
-      { $pull: { employeeList:id } }
+      { $pull: { employeeList: id } }
     );
-    console.log(mana);
     res.status(200).json({ mssg: `Employee (${id}) deleted` });
   } else {
     res.status(400).json({ mssg: `There is no employee in this ID:${id}` });
   }
 });
 
-export { createEmployee, removeEmployee };
+//Method   GET
+//Route    /api/manager/employees
+const employees = asyncHandler(async (req, res) => {
+  const { branchId } = req.query;
+
+  const employeesList = await Employee.find({ branchId });
+
+  if (!employeesList) {
+    return res
+      .status(400)
+      .json({ err: "There is no employee in this branchId" });
+  }
+
+  res.status(200).json({ employeesList });
+});
+
+//Method   GET
+//Route    /api/manager/employee/:id
+const employee = asyncHandler(async (req, res) => {
+  const { employeeId } = req.query;
+
+  const employeeDetails = await Employee.findById({ _id: employeeId });
+
+  if (!employeeDetails) {
+    return res.status(400).json({ err: "There is no employee in this Id" });
+  }
+
+  res.status(200).json({ employeeDetails });
+});
+
+
+export { createEmployee, removeEmployee, employees, employee };
